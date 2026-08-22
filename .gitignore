@@ -1,0 +1,39 @@
+# C++编译生成程序，不需要上传
+*.exe
+*.out
+tempCodeRunnerFile.*
+*.pdb
+
+# VS Code本地缓存配置，不用传到github
+.vscode/
+.vs/
+
+# 系统、临时文件
+.DS_Store
+*.log
+*.tmp
+*.txt
+
+# 打包、压缩文件
+*.zip
+*.rar
+*.7z
+
+
+# 自定义临时草稿文件夹（如果你后面建temp文件夹会自动忽略）
+temp/
+draft/
+
+# 忽略VS所有缓存、临时项目、编译产物
+.vscode/
+**/test/
+*.suo
+*.wsuo
+*.obj
+*.pdb
+*.exe
+*.ipch
+*.sdf
+*.sqlite
+/CppProperties.json
+
