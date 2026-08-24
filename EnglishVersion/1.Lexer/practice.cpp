@@ -7,7 +7,5 @@ static int gettok()
 
     // skip any whitespace
     while(std::isspace(lastChar))
-    {
         lastChar = std::getchar();
-    }
 }
