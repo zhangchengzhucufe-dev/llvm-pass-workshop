@@ -14,6 +14,7 @@ add_definitions(${LLVM_DEFINITIONS})
 # one you care about -- building the whole tree works too.
 foreach(D IN ITEMS
     01-hello-pass
+    02-dataflow-liveness
   add_subdirectory(${D})
 endforeach()
 
