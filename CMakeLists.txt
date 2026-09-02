@@ -15,6 +15,7 @@ add_definitions(${LLVM_DEFINITIONS})
 foreach(D IN ITEMS
     01-hello-pass
     02-dataflow-liveness
+    03-alias-analysis
   add_subdirectory(${D})
 endforeach()
 
