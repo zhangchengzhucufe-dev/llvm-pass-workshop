@@ -16,6 +16,7 @@ foreach(D IN ITEMS
     01-hello-pass
     02-dataflow-liveness
     03-alias-analysis
+    04-memoryssa
   add_subdirectory(${D})
 endforeach()
 
