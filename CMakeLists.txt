@@ -21,6 +21,8 @@ foreach(D IN ITEMS
   add_subdirectory(${D})
 endforeach()
 
+# 05 is an executable, not a plugin.
+add_subdirectory(05-orc-jit)
 
 # `ninja check`: run the lit suite in test/. Needs llvm-lit or a pip
 # installed lit on PATH; $OPT is derived from LLVM_DIR so the tests run
