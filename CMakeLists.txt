@@ -18,6 +18,7 @@ foreach(D IN ITEMS
     03-alias-analysis
     04-memoryssa
     06-dominator
+    07-licm
   add_subdirectory(${D})
 endforeach()
 
