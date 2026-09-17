@@ -19,6 +19,7 @@ foreach(D IN ITEMS
     04-memoryssa
     06-dominator
     07-licm
+    09-instcombine-lite
   add_subdirectory(${D})
 endforeach()
 
