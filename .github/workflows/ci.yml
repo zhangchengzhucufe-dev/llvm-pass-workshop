@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# a llvm build is expensive; don't let a superseded run keep cooking
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # tracking main: when an API change lands upstream, this build is
+      # where I find out. Pin to a known-good ref if that gets annoying.
+      - uses: actions/checkout@v4
+        with:
+          repository: llvm/llvm-project
+          ref: main
+          path: llvm-project
+          fetch-depth: 1
+
+      - name: install the toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang lld ninja-build ccache python3-pip
+          python3 -m pip install --break-system-packages lit
+
+      - name: cache the llvm build
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: llvm-main
+          max-size: 4G
+
+      # only opt + FileCheck, x86 only: enough to build and test the
+      # plugins, about half the compile time of a full build
+      - name: build llvm
+        run: |
+          cmake -S llvm-project/llvm -B llvm-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DLLVM_USE_LINKER=lld \
+            -DLLVM_TARGETS_TO_BUILD=X86 \
+            -DLLVM_ENABLE_ZSTD=OFF \
+            -DLLVM_ENABLE_LIBXML2=OFF \
+            -DLLVM_ENABLE_CURL=OFF \
+            -DLLVM_INCLUDE_EXAMPLES=OFF \
+            -DLLVM_INCLUDE_TESTS=OFF \
+            -DLLVM_INCLUDE_BENCHMARKS=OFF
+          # opt + FileCheck alone don't pull everything the plugins link
+          # against: mini-jit needs OrcJIT, and the `native` component drags
+          # in LLVMX86Disassembler. Learned that the hard way locally.
+          ninja -C llvm-build opt FileCheck LLVMOrcJIT LLVMX86Disassembler
+
+      - name: build the passes
+        run: |
+          cmake -B build -G Ninja \
+            -DLLVM_DIR="$GITHUB_WORKSPACE/llvm-build/lib/cmake/llvm" \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_BUILD_TYPE=Release
+          ninja -C build
+
+      - name: run the lit tests
+        env:
+          OPT: ${{ github.workspace }}/llvm-build/bin/opt
+        run: python3 -m lit test -v
+
+      - name: smoke-test the jit
+        run: |
+          (echo '1 + 2 * 3'; echo '2 * (3 + 4)'; echo quit) | ./build/05-orc-jit/mini-jit
