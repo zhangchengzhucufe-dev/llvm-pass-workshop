@@ -20,6 +20,7 @@ foreach(D IN ITEMS
     06-dominator
     07-licm
     09-instcombine-lite
+    10-gep-datalayout
   add_subdirectory(${D})
 endforeach()
 
