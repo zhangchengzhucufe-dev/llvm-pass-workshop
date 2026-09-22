@@ -21,6 +21,7 @@ foreach(D IN ITEMS
     07-licm
     09-instcombine-lite
     10-gep-datalayout
+    11-attributes
   add_subdirectory(${D})
 endforeach()
 
