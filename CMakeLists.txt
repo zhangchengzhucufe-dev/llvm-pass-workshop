@@ -23,6 +23,7 @@ foreach(D IN ITEMS
     10-gep-datalayout
     11-attributes
     12-sccp
+    13-inline-cost
   add_subdirectory(${D})
 endforeach()
 
