@@ -24,6 +24,7 @@ foreach(D IN ITEMS
     11-attributes
     12-sccp
     13-inline-cost
+    14-global-dce
   add_subdirectory(${D})
 endforeach()
 
