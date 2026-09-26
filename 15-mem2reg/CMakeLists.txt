@@ -1,0 +1,1 @@
+add_llvm_pass_plugin(LiteMem2Reg LiteMem2Reg.cpp)
