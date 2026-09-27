@@ -1,0 +1,3 @@
+# Match llvm's house style instead of restating their whole config.
+BasedOnStyle: LLVM
+Standard: c++17
