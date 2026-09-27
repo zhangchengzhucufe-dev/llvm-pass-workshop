@@ -27,6 +27,7 @@ foreach(D IN ITEMS
     14-global-dce
     15-mem2reg
     16-dse-memoryssa
+    17-gvn-lite)
   add_subdirectory(${D})
 endforeach()
 
